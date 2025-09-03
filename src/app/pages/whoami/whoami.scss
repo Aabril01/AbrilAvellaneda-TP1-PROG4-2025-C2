@@ -1,0 +1,44 @@
+h1, h2, h3 {
+  color: #fff; /* títulos en blanco */
+}
+
+p, li {
+  color: #ddd; /* texto claro */
+}
+
+.container {
+  background-color: #1a1a2e; /* fondo oscuro */
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 0 15px rgba(0,0,0,0.5);
+}
+
+img {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+}
+
+ul {
+  margin-top: 1rem;
+  padding-left: 1.5rem;
+
+  li {
+    margin-bottom: 0.5rem;
+  }
+}
+
+.btn-outline-light {
+  border-radius: 20px;
+  padding: 0.4rem 1rem;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: #fff;
+    color: #000;
+  }
+}
+
+.alert-danger {
+  border-radius: 8px;
+  font-weight: 500;
+}
