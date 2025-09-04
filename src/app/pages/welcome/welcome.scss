@@ -1,3 +1,32 @@
 h1 {
   color: #fff;
 }
+
+:host {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-image: url('/bitzone.png');
+  background-repeat: repeat;
+  background-size: 120px 120px;
+}
+
+.welcome-container {
+  background: #fff;         /* recuadro blanco */
+  padding: 2rem 3rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
+  text-align: center;
+
+  h1 {
+    margin-bottom: 1rem;
+  }
+
+  .btn-group {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+}

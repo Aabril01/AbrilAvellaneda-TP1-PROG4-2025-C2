@@ -1,1 +1,24 @@
 @import "bootstrap/dist/css/bootstrap.min.css";
+.navbar {
+  background: #0b0b1a;
+  padding: 1rem;
+
+  ul {
+    display: flex;
+    justify-content: center; /* centra los links */
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 2rem;
+  }
+
+  a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+
+    &.active {
+      border-bottom: 2px solid #fff;
+    }
+  }
+}
