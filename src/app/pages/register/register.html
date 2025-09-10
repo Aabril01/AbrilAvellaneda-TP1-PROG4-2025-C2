@@ -1,4 +1,42 @@
-<div class="container py-5">
-  <h1>Registro</h1>
-  <p class="text-secondary">Pantalla temporal (Sprint 2 implementa registro real).</p>
-</div>
+<!-- src/app/pages/register/register.html -->
+<section class="auth">
+  <h2>Crear cuenta</h2>
+
+  <form #f="ngForm" (ngSubmit)="onSubmit(f)" novalidate>
+    <div class="row">
+      <label>
+        Nombre
+        <input name="name" [(ngModel)]="model.name" required />
+      </label>
+      <label>
+        Apellido
+        <input name="surname" [(ngModel)]="model.surname" required />
+      </label>
+    </div>
+
+    <label>
+      Edad
+      <input type="number" name="age" [(ngModel)]="model.age" required min="18" max="99" />
+    </label>
+
+    <label>
+      Correo
+      <input type="email" name="email" [(ngModel)]="model.email" required email />
+    </label>
+
+    <label>
+      Contraseña
+      <input type="password" name="password" [(ngModel)]="model.password" required minlength="6" />
+    </label>
+
+    @if (errorMsg) { <p class="error">{{ errorMsg }}</p> }
+
+    <button class="btn primary" type="submit" [disabled]="loading || !f.valid">
+      {{ loading ? 'Registrando…' : 'Registrarme' }}
+    </button>
+  </form>
+
+  <p class="hint">
+    *La contraseña no se guarda en la base de datos, solo en el sistema de autenticación.
+  </p>
+</section>

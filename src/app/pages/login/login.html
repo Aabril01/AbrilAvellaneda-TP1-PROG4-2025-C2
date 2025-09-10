@@ -1,4 +1,31 @@
-<div class="container py-5">
-  <h1>Login</h1>
-  <p class="text-secondary">Pantalla temporal (Sprint 2 implementa autenticación).</p>
-</div>
+<!-- src/app/pages/login/login.html -->
+<section class="auth">
+  <h2>Iniciar sesión</h2>
+
+  <form (ngSubmit)="onSubmit()" #f="ngForm" novalidate>
+    <label>
+      Correo
+      <input type="email" name="email" [(ngModel)]="email" required email />
+    </label>
+
+    <label>
+      Contraseña
+      <input type="password" name="password" [(ngModel)]="password" required minlength="6" />
+    </label>
+
+    @if (errorMsg) { <p class="error">{{ errorMsg }}</p> }
+
+    <button class="btn primary" type="submit" [disabled]="loading || !f.valid">
+      {{ loading ? 'Ingresando…' : 'Ingresar' }}
+    </button>
+  </form>
+
+  <div class="quick">
+    <p>Accesos rápidos (demo):</p>
+    <div class="grid">
+      @for (u of demoUsers; track u.email) {
+        <button class="btn" type="button" (click)="quickLogin(u)">{{ u.alias }}</button>
+      }
+    </div>
+  </div>
+</section>

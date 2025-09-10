@@ -1,9 +1,26 @@
-<div class="welcome-container">
-  <h1>Bienvenida</h1>
-  <p>Accedé a los juegos y resultados desde el menú.</p>
-  <div class="btn-group">
-    <a routerLink="/login" class="btn btn-primary">Login</a>
-    <a routerLink="/register" class="btn btn-secondary">Registro</a>
-    <a routerLink="/whoami" class="btn btn-outline-dark">Quién soy</a>
-  </div>
-</div>
+<!-- src/app/pages/welcome/welcome.html -->
+<section class="welcome">
+  @if (!auth.isLoggedIn()) {
+    <div class="card">
+      <h2>Bienvenida/o a <strong>Bitzone</strong></h2>
+      <p>Accedé a los juegos y resultados desde el menú.</p>
+      <div class="actions">
+        <button class="btn primary" (click)="goLogin()">Login</button>
+        <button class="btn" (click)="goRegister()">Registro</button>
+        <a class="btn ghost" routerLink="/whoami">Quién soy</a>
+      </div>
+    </div>
+  } @else {
+    <div class="card">
+      <h2>Hola, {{ auth.user()?.displayName || auth.user()?.email }}</h2>
+      <p>Elegí una opción para continuar:</p>
+      <nav class="links">
+        <a routerLink="/games/ahorcado" class="btn">Ahorcado</a>
+        <a routerLink="/games/mayor-menor" class="btn">Mayor o menor</a>
+        <a routerLink="/results" class="btn">Resultados</a>
+        <a routerLink="/whoami" class="btn ghost">Quién soy</a>
+      </nav>
+      <button class="btn danger" (click)="logout()">Cerrar sesión</button>
+    </div>
+  }
+</section>

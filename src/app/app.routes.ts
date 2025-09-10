@@ -1,13 +1,33 @@
+// src/app/app.routes.ts
 import { Routes } from '@angular/router';
-import { Welcome } from './pages/welcome/welcome';
-import { Login } from './pages/login/login';
-import { Register } from './pages/register/register';
-import { Whoami } from './pages/whoami/whoami';
 
 export const routes: Routes = [
-  { path: '', component: Welcome },
-  { path: 'login', component: Login },
-  { path: 'register', component: Register },
-  { path: 'whoami', component: Whoami },
+  {
+    path: '',
+    loadComponent: () => import('./pages/welcome/welcome').then(m => m.WelcomePage)
+  },
+  {
+    path: 'login',
+    loadComponent: () => import('./pages/login/login').then(m => m.LoginPage)
+  },
+  {
+    path: 'register',
+    loadComponent: () => import('./pages/register/register').then(m => m.RegisterPage)
+  },
+  {
+    path: 'whoami',
+    loadComponent: () => import('./pages/whoami/whoami').then(m => m.Whoami)
+  },
+  // Lazy children (asegurate de crear los .routes.ts de abajo tal cual)
+  {
+    path: 'games',
+    loadChildren: () =>
+      import('./pages/games/games.routes').then(m => m.GAMES_ROUTES)
+  },
+  {
+    path: 'results',
+    loadChildren: () =>
+      import('./pages/results/results.routes').then(m => m.RESULTS_ROUTES)
+  },
   { path: '**', redirectTo: '' }
 ];
