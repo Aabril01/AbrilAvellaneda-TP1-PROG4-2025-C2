@@ -1,20 +1,19 @@
-<!-- src/app/pages/welcome/welcome.html -->
-<section class="welcome">
+<section class="center">
   @if (!auth.isLoggedIn()) {
-    <div class="card">
-      <h2>Bienvenida/o a <strong>Bitzone</strong></h2>
-      <p>Accedé a los juegos y resultados desde el menú.</p>
-      <div class="actions">
+    <div class="card" style="width:min(720px, 92vw);">
+      <h2 class="h1">Bienvenida/o a <strong>Bitzone</strong></h2>
+      <p class="p">Accedé a los juegos y resultados desde el menú.</p>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
         <button class="btn primary" (click)="goLogin()">Login</button>
         <button class="btn" (click)="goRegister()">Registro</button>
         <a class="btn ghost" routerLink="/whoami">Quién soy</a>
       </div>
     </div>
   } @else {
-    <div class="card">
-      <h2>Hola, {{ auth.user()?.displayName || auth.user()?.email }}</h2>
-      <p>Elegí una opción para continuar:</p>
-      <nav class="links">
+    <div class="card" style="width:min(820px, 92vw);">
+      <h2 class="h1">Hola, {{ auth.user()?.displayName || auth.user()?.email }}</h2>
+      <p class="p">Elegí una opción para continuar:</p>
+      <nav style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px;">
         <a routerLink="/games/ahorcado" class="btn">Ahorcado</a>
         <a routerLink="/games/mayor-menor" class="btn">Mayor o menor</a>
         <a routerLink="/results" class="btn">Resultados</a>

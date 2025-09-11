@@ -1,42 +1,40 @@
-<!-- src/app/pages/register/register.html -->
-<section class="auth">
-  <h2>Crear cuenta</h2>
+<section class="center">
+  <div class="card" style="width:min(720px, 92vw);">
+    <h2 class="h1">Crear cuenta</h2>
 
-  <form #f="ngForm" (ngSubmit)="onSubmit(f)" novalidate>
-    <div class="row">
-      <label>
-        Nombre
-        <input name="name" [(ngModel)]="model.name" required />
+    <form class="form" #f="ngForm" (ngSubmit)="onSubmit(f)" novalidate>
+      <div class="row">
+        <label>Nombre
+          <input name="name" [(ngModel)]="model.name" required />
+        </label>
+        <label>Apellido
+          <input name="surname" [(ngModel)]="model.surname" required />
+        </label>
+      </div>
+
+      <label>Edad
+        <input type="number" name="age" [(ngModel)]="model.age" required min="18" max="99" />
       </label>
-      <label>
-        Apellido
-        <input name="surname" [(ngModel)]="model.surname" required />
+
+      <label>Correo
+        <input type="email" name="email" [(ngModel)]="model.email" required email />
       </label>
-    </div>
 
-    <label>
-      Edad
-      <input type="number" name="age" [(ngModel)]="model.age" required min="18" max="99" />
-    </label>
+      <label>Contraseña
+        <input type="password" name="password" [(ngModel)]="model.password" required minlength="6" />
+      </label>
 
-    <label>
-      Correo
-      <input type="email" name="email" [(ngModel)]="model.email" required email />
-    </label>
+      @if (errorMsg) { <p class="error">{{ errorMsg }}</p> }
 
-    <label>
-      Contraseña
-      <input type="password" name="password" [(ngModel)]="model.password" required minlength="6" />
-    </label>
+      <div style="display:flex; gap:10px;">
+        <button class="btn primary" type="submit" [disabled]="loading || !f.valid">
+          {{ loading ? 'Registrando…' : 'Registrarme' }}
+        </button>
+      </div>
+    </form>
 
-    @if (errorMsg) { <p class="error">{{ errorMsg }}</p> }
-
-    <button class="btn primary" type="submit" [disabled]="loading || !f.valid">
-      {{ loading ? 'Registrando…' : 'Registrarme' }}
-    </button>
-  </form>
-
-  <p class="hint">
-    *La contraseña no se guarda en la base de datos, solo en el sistema de autenticación.
-  </p>
+    <p class="p" style="margin-top:10px;">
+      *La contraseña no se guarda en la base de datos, solo en el sistema de autenticación.
+    </p>
+  </div>
 </section>

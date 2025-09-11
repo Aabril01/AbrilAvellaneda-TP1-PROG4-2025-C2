@@ -1,31 +1,30 @@
-<!-- src/app/pages/login/login.html -->
-<section class="auth">
-  <h2>Iniciar sesión</h2>
+<section class="center">
+  <div class="card" style="width:min(720px, 92vw);">
+    <h2 class="h1">Iniciar sesión</h2>
+    <form class="form" (ngSubmit)="onSubmit()" #f="ngForm" novalidate>
+      <label>Correo
+        <input type="email" name="email" [(ngModel)]="email" required email />
+      </label>
+      <label>Contraseña
+        <input type="password" name="password" [(ngModel)]="password" required minlength="6" />
+      </label>
 
-  <form (ngSubmit)="onSubmit()" #f="ngForm" novalidate>
-    <label>
-      Correo
-      <input type="email" name="email" [(ngModel)]="email" required email />
-    </label>
+      @if (errorMsg) { <p class="error">{{ errorMsg }}</p> }
 
-    <label>
-      Contraseña
-      <input type="password" name="password" [(ngModel)]="password" required minlength="6" />
-    </label>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <button class="btn primary" type="submit" [disabled]="loading || !f.valid">
+          {{ loading ? 'Ingresando…' : 'Ingresar' }}
+        </button>
+      </div>
+    </form>
 
-    @if (errorMsg) { <p class="error">{{ errorMsg }}</p> }
-
-    <button class="btn primary" type="submit" [disabled]="loading || !f.valid">
-      {{ loading ? 'Ingresando…' : 'Ingresar' }}
-    </button>
-  </form>
-
-  <div class="quick">
-    <p>Accesos rápidos (demo):</p>
-    <div class="grid">
-      @for (u of demoUsers; track u.email) {
-        <button class="btn" type="button" (click)="quickLogin(u)">{{ u.alias }}</button>
-      }
+    <div style="margin-top:18px;">
+      <p class="p" style="margin-bottom:10px;">Accesos rápidos (demo)</p>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        @for (u of demoUsers; track u.email) {
+          <button class="btn" type="button" (click)="quickLogin(u)">{{ u.alias }}</button>
+        }
+      </div>
     </div>
   </div>
 </section>

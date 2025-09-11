@@ -1,10 +1,12 @@
-<nav class="px-3 py-2 d-flex justify-content-center align-items-center gap-4" 
-     style="background:#0b0b1a; color:#fff">
-  <img src="/bitzone.png" alt="Bitzone" width="28" height="28" class="me-2" />
-  <a routerLink="/" class="fw-bold text-decoration-none" style="color:#fff">Inicio</a>
-  <a routerLink="/login" class="text-decoration-none" style="color:#fff">Login</a>
-  <a routerLink="/register" class="text-decoration-none" style="color:#fff">Registro</a>
-  <a routerLink="/whoami" class="text-decoration-none" style="color:#fff">Quién soy</a>
-</nav>
-
-<router-outlet />
+<header class="navbar">
+  <div class="inner">
+    <!-- tu logo -->
+    <nav style="display:flex; gap:6px;">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">Inicio</a>
+      <a routerLink="/login" routerLinkActive="active">Login</a>
+      <a routerLink="/register" routerLinkActive="active">Registro</a>
+      <a routerLink="/whoami" routerLinkActive="active">Quién soy</a>
+    </nav>
+  </div>
+</header>
+<router-outlet/>
