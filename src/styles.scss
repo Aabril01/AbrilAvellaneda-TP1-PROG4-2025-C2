@@ -94,3 +94,37 @@ label{ display:grid; gap:6px; color: var(--muted); font-size: 14px; }
 }
 .navbar a{ color: var(--muted); text-decoration:none; padding: 8px 10px; border-radius: 10px; }
 .navbar a.active, .navbar a:hover{ color: var(--text); background: #1a1c26; }
+/* === GRID DE JUEGOS === */
+.grid-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin: 12px 0 4px;
+}
+
+.game-card {
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 16px;
+  overflow: hidden;
+  text-decoration: none;
+  color: var(--text);
+  transition: .18s ease;
+  display: grid;
+  grid-template-rows: 150px auto;
+}
+.game-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--primary);
+}
+.game-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.game-card .title {
+  padding: 10px 12px;
+  font-weight: 700;
+  text-align: center;
+}

@@ -10,16 +10,38 @@
       </div>
     </div>
   } @else {
-    <div class="card" style="width:min(820px, 92vw);">
+    <div class="card" style="width:min(980px, 95vw);">
       <h2 class="h1">Hola, {{ auth.user()?.displayName || auth.user()?.email }}</h2>
-      <p class="p">Elegí una opción para continuar:</p>
-      <nav style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px;">
-        <a routerLink="/games/ahorcado" class="btn">Ahorcado</a>
-        <a routerLink="/games/mayor-menor" class="btn">Mayor o menor</a>
+      <p class="p">Elegí un juego para continuar:</p>
+
+      <!-- GRID DE JUEGOS -->
+      <div class="grid-cards">
+        <a class="game-card" routerLink="/games/ahorcado">
+          <img src="/games/ahorcado.png" alt="Ahorcado">
+          <div class="title">Ahorcado</div>
+        </a>
+
+        <a class="game-card" routerLink="/games/mayor-menor">
+          <img src="/games/mayor-menor.png" alt="Mayor o menor">
+          <div class="title">Mayor o menor</div>
+        </a>
+
+        <a class="game-card" routerLink="/games/preguntados">
+          <img src="/games/preguntados.png" alt="Preguntados">
+          <div class="title">Preguntados</div>
+        </a>
+
+        <a class="game-card" routerLink="/games/sudoku">
+          <img src="/games/sudoku.png" alt="Sudoku">
+          <div class="title">Sudoku (juego propio)</div>
+        </a>
+      </div>
+
+      <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;">
         <a routerLink="/results" class="btn">Resultados</a>
         <a routerLink="/whoami" class="btn ghost">Quién soy</a>
-      </nav>
-      <button class="btn danger" (click)="logout()">Cerrar sesión</button>
+        <button class="btn danger" (click)="logout()">Cerrar sesión</button>
+      </div>
     </div>
   }
 </section>
