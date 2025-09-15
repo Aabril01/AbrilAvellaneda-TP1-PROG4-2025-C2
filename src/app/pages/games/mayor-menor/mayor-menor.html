@@ -1,0 +1,26 @@
+<section class="container">
+  <a routerLink="/games" class="btn ghost" style="margin-bottom:12px;">← Volver</a>
+
+  <div class="card">
+    <h2 class="h1">Mayor o menor</h2>
+    <p class="p">Ronda {{ rounds() }}/{{ maxRounds }} — Puntaje: <b>{{ score() }}</b></p>
+
+    <div class="board">
+      <div class="num current">{{ current() }}</div>
+
+      @if (status() === 'playing') {
+        <div class="actions">
+          <button class="btn primary" (click)="play('menor')">Menor</button>
+          <button class="btn primary" (click)="play('mayor')">Mayor</button>
+        </div>
+      } @else {
+        <div class="result ok">Partida finalizada. Tu puntaje: <b>{{ score() }}</b></div>
+        <button class="btn primary" (click)="reset()">Jugar de nuevo</button>
+      }
+
+      @if (next() !== null) {
+        <div class="num next">Siguiente: {{ next() }}</div>
+      }
+    </div>
+  </div>
+</section>

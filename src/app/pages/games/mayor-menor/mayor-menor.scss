@@ -1,0 +1,11 @@
+.board{
+  display:grid; gap:14px; align-items:center; justify-items:center;
+}
+.num{
+  font-size: clamp(28px, 6vw, 60px);
+  padding: 14px 22px; border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.06);
+}
+.actions{ display:flex; gap:10px; }
+.result.ok{ margin-top:8px; background: rgba(34,197,94,.15); border: 1px solid rgba(34,197,94,.35); padding:10px 12px; border-radius:10px; }

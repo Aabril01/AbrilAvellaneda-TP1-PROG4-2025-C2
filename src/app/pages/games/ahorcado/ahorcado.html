@@ -1,0 +1,26 @@
+<section class="container">
+  <a routerLink="/games" class="btn ghost" style="margin-bottom:12px;">← Volver</a>
+
+  <div class="card">
+    <h2 class="h1">Ahorcado</h2>
+    <p class="p">Adiviná la palabra. Tenés {{ attemptsLeft() }} intentos.</p>
+
+    <div class="word">{{ masked() }}</div>
+
+    @if (status() === 'playing') {
+      <div class="keys">
+        @for (l of alphabet; track l) {
+          <button class="key"
+            [disabled]="isGuessed(l)"
+            (click)="guess(l)">{{ l }}</button>
+        }
+      </div>
+    } @else if (status() === 'won') {
+      <div class="result ok">¡Ganaste! 🎉</div>
+      <button class="btn primary" (click)="reset()">Jugar otra</button>
+    } @else {
+      <div class="result bad">Perdiste 😢 — La palabra era <b>{{ word() }}</b></div>
+      <button class="btn primary" (click)="reset()">Reintentar</button>
+    }
+  </div>
+</section>
