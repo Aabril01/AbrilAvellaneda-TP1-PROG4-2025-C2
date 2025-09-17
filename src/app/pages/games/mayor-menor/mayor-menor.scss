@@ -1,11 +1,22 @@
 .board{
-  display:grid; gap:14px; align-items:center; justify-items:center;
+  display:grid; gap:16px; align-items:center; justify-items:center;
 }
-.num{
-  font-size: clamp(28px, 6vw, 60px);
-  padding: 14px 22px; border-radius: 16px;
-  border: 1px solid rgba(255,255,255,.12);
+.card-visual{
+  display:grid; gap:6px; justify-items:center; margin: 6px 0;
+}
+.card-visual img{
+  width:min(220px, 60vw);
+  aspect-ratio: 3/4; object-fit: contain;
   background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 16px; padding: 10px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.25);
 }
-.actions{ display:flex; gap:10px; }
-.result.ok{ margin-top:8px; background: rgba(34,197,94,.15); border: 1px solid rgba(34,197,94,.35); padding:10px 12px; border-radius:10px; }
+.card-visual figcaption{ opacity:.8; font-size:.9rem; }
+.actions{ display:flex; gap:12px; }
+.result.ok{
+  margin-top:8px; background: rgba(34,197,94,.15);
+  border: 1px solid rgba(34,197,94,.35); padding:10px 12px; border-radius:10px;
+}
+.fade-in{ animation: fade .28s ease; }
+@keyframes fade{ from{opacity:0; transform:translateY(-4px)} to{opacity:1; transform:none} }

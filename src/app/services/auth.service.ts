@@ -1,36 +1,67 @@
 // src/app/services/auth.service.ts
 import { Injectable, computed, signal } from '@angular/core';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { SupabaseClient } from '@supabase/supabase-js';
+import { SupabaseService } from './supabase.service';
 import { environment } from '../../environments/environment';
 
-export type AppUser = {
-  id: string;
-  email: string;
-  displayName?: string;
-};
+export type AppUser = { id: string; email?: string | null; displayName?: string | null };
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  // estado reactivo con Signals (Clase 6)
+  // --- estado ---
   private _user = signal<AppUser | null>(null);
-  private _lastError = signal<string>('');
-
   user = computed(() => this._user());
   isLoggedIn = () => !!this._user();
+
+  private _lastError = signal<string>('');
   lastError = () => this._lastError();
 
-  private supabase?: SupabaseClient;
+  // --- internals ---
+  private supabase!: SupabaseClient;         // se asigna en el constructor si hay claves
   private useLocalFallback = false;
 
-  constructor() {
-    // Si hay claves, inicializamos Supabase (Clase 5)
+  constructor(private sb: SupabaseService) {
+    // Si hay claves válidas, usamos Supabase real
     if (environment.supabaseUrl && environment.supabaseAnonKey) {
-      this.supabase = createClient(environment.supabaseUrl, environment.supabaseAnonKey);
-      // Restaurar sesión si existía
-      const persisted = localStorage.getItem('bitzone_user');
-      if (persisted) this._user.set(JSON.parse(persisted));
+      this.useLocalFallback = false;
+      this.supabase = this.sb.client;        // <<< un solo cliente para toda la app
+
+      // Restaurar sesión si existe (y sincronizar signals/localStorage)
+      (async () => {
+        const { data } = await this.supabase.auth.getUser();
+        const u = data.user;
+        if (u) {
+          this._user.set({
+            id: u.id,
+            email: u.email ?? null,
+            displayName: (u.user_metadata as any)?.name ?? u.email?.split('@')[0] ?? null
+          });
+          localStorage.setItem('bitzone_user', JSON.stringify(this._user()));
+        } else {
+          // si no hay user, pero había algo local, lo dejamos por compatibilidad
+          const persisted = localStorage.getItem('bitzone_user');
+          if (persisted) this._user.set(JSON.parse(persisted));
+        }
+      })();
+
+      // Escuchar cambios de sesión (login/logout/refresh)
+      this.supabase.auth.onAuthStateChange((_ev, session) => {
+        const u = session?.user;
+        if (u) {
+          this._user.set({
+            id: u.id,
+            email: u.email ?? null,
+            displayName: (u.user_metadata as any)?.name ?? u.email?.split('@')[0] ?? null
+          });
+          localStorage.setItem('bitzone_user', JSON.stringify(this._user()));
+        } else {
+          this._user.set(null);
+          localStorage.removeItem('bitzone_user');
+        }
+      });
+
     } else {
-      // Modo fallback local: te deja avanzar el Sprint 2 sin claves reales
+      // Modo fallback local: permite avanzar sin Supabase configurado
       this.useLocalFallback = true;
       const persisted = localStorage.getItem('bitzone_user');
       if (persisted) this._user.set(JSON.parse(persisted));
@@ -42,8 +73,7 @@ export class AuthService {
     this._lastError.set('');
     try {
       if (this.useLocalFallback) {
-        // --- Fallback local (desarrollo / sin claves) ---
-        // 3 cuentas demo para "login rápido" (Sprint 2)
+        // --- Fallback local (Sprint 2/3) ---
         const demos = ['tester1@bitzone.com', 'tester2@bitzone.com', 'tester3@bitzone.com'];
         if (demos.includes(email) && password === '123456') {
           const demoUser: AppUser = { id: crypto.randomUUID(), email, displayName: email.split('@')[0] };
@@ -55,7 +85,7 @@ export class AuthService {
       }
 
       // --- Supabase real ---
-      const { data, error } = await this.supabase!.auth.signInWithPassword({ email, password });
+      const { data, error } = await this.supabase.auth.signInWithPassword({ email, password });
       if (error || !data.user) {
         this._lastError.set(error?.message ?? 'No se pudo iniciar sesión');
         return false;
@@ -67,6 +97,7 @@ export class AuthService {
       };
       this.persistUser(appUser);
       return true;
+
     } catch (e: any) {
       this._lastError.set(e?.message ?? 'Error de autenticación');
       return false;
@@ -79,7 +110,6 @@ export class AuthService {
     try {
       if (this.useLocalFallback) {
         // --- Fallback local ---
-        // simulamos "usuario ya existe" si el email termina en +exists
         if (model.email.endsWith('+exists@bitzone.com')) {
           this._lastError.set('El usuario ya se encuentra registrado (simulado).');
           return false;
@@ -94,7 +124,7 @@ export class AuthService {
       }
 
       // --- Supabase real ---
-      const { data, error } = await this.supabase!.auth.signUp({
+      const { data, error } = await this.supabase.auth.signUp({
         email: model.email,
         password: model.password,
         options: { data: { name: model.name, surname: model.surname, age: model.age } }
@@ -104,9 +134,8 @@ export class AuthService {
         return false;
       }
 
-      // Guardar perfil en una tabla pública (sin contraseña)
-      // TODO: crea la tabla 'profiles(id uuid primary key, email text, name text, surname text, age int)'
-      await this.supabase!.from('profiles').upsert({
+      // Guardar perfil en tabla pública (opcional)
+      await this.supabase.from('profiles').upsert({
         id: data.user.id, email: model.email, name: model.name, surname: model.surname, age: model.age
       });
 
@@ -118,20 +147,21 @@ export class AuthService {
       };
       this.persistUser(appUser);
       return true;
+
     } catch (e: any) {
       this._lastError.set(e?.message ?? 'Error al registrar');
       return false;
     }
   }
 
+  /** Cerrar sesión */
   logout(): void {
-    // si hay supabase, cerrar sesión remota (ignorar errores)
     this.supabase?.auth.signOut().catch(() => {});
     this._user.set(null);
     localStorage.removeItem('bitzone_user');
   }
 
-  /** Guarda usuario en signal + localStorage */
+  /** Persistir usuario en signal + localStorage */
   private persistUser(u: AppUser) {
     this._user.set(u);
     localStorage.setItem('bitzone_user', JSON.stringify(u));

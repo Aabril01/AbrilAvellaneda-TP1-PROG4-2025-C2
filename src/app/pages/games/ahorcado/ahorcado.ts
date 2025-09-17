@@ -30,7 +30,16 @@ export class AhorcadoPage {
 
   alphabet = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ'.split('');
 
-  constructor(private results: ResultsService) {}
+  constructor(private results: ResultsService) {
+    // sincronizar errors con attemptsLeft
+    const update = () => this.errors.set(6 - this.attemptsLeft());
+    update();
+    // parche simple: cada vez que se llame guess/reset, se recalcula:
+    const origGuess = this.guess.bind(this);
+    this.guess = (l: string) => { origGuess(l); update(); };
+    const origReset = this.reset.bind(this);
+    this.reset = () => { origReset(); update(); };
+  }
 
   private pickWord(): string {
     return WORDS[Math.floor(Math.random()*WORDS.length)];
@@ -71,4 +80,9 @@ export class AhorcadoPage {
   }
 
   isGuessed(l: string) { return this.guesses().has(l); }
+
+// errores usados = 6 - attemptsLeft()
+  errors = signal<number>(0);
 }
+
+

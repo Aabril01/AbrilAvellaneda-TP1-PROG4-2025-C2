@@ -1,7 +1,8 @@
 import { Injectable, signal } from '@angular/core';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { SupabaseClient } from '@supabase/supabase-js';
 import { environment } from '../../environments/environment';
 import { AuthService } from './auth.service';
+import { SupabaseService } from './supabase.service';
 
 export type GameResult = {
   id?: string;
@@ -13,7 +14,7 @@ export type GameResult = {
 
 @Injectable({ providedIn: 'root' })
 export class ResultsService {
-  private supabase?: SupabaseClient;
+  private supabase!: SupabaseClient;      // usamos SIEMPRE el client compartido
   private useLocalFallback = false;
 
   // cache en memoria para la lista de resultados del usuario
@@ -21,10 +22,16 @@ export class ResultsService {
   loading = signal(false);
   error = signal<string>('');
 
-  constructor(private auth: AuthService) {
+  constructor(
+    private auth: AuthService,
+    private sb: SupabaseService          // inyectamos el servicio único
+  ) {
     if (environment.supabaseUrl && environment.supabaseAnonKey) {
-      this.supabase = createClient(environment.supabaseUrl, environment.supabaseAnonKey);
+      // cliente único (evita Multiple GoTrueClient y 401 aleatorios)
+      this.supabase = this.sb.client;
+      this.useLocalFallback = false;
     } else {
+      // modo local si no hay claves
       this.useLocalFallback = true;
     }
   }
@@ -46,7 +53,7 @@ export class ResultsService {
         // refrescar cache
         this.results.set(arr);
       } else {
-        const { error } = await this.supabase!.from('results').insert(row);
+        const { error } = await this.supabase.from('results').insert(row);
         if (error) throw error;
         await this.listMine(); // refrescar
       }
@@ -67,7 +74,7 @@ export class ResultsService {
         const arr: GameResult[] = JSON.parse(localStorage.getItem(key) || '[]');
         this.results.set(arr);
       } else {
-        const { data, error } = await this.supabase!
+        const { data, error } = await this.supabase
           .from('results')
           .select('*')
           .eq('user_id', user.id)
@@ -91,10 +98,10 @@ export class ResultsService {
         localStorage.removeItem(`bitzone_results_${user.id}`);
         this.results.set([]);
       } else {
-        const { error } = await this.supabase!.from('results').delete().eq('user_id', user.id);
+        const { error } = await this.supabase.from('results').delete().eq('user_id', user.id);
         if (error) throw error;
         this.results.set([]);
       }
-    } catch (e) { /* ignore */ }
+    } catch { /* ignore */ }
   }
 }

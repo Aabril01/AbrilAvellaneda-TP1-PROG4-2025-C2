@@ -2,11 +2,14 @@
   <a routerLink="/games" class="btn ghost" style="margin-bottom:12px;">← Volver</a>
 
   <div class="card">
-    <h2 class="h1">Mayor o menor</h2>
+    <h2 class="h1">Mayor o menor (naipes españoles)</h2>
     <p class="p">Ronda {{ rounds() }}/{{ maxRounds }} — Puntaje: <b>{{ score() }}</b></p>
 
     <div class="board">
-      <div class="num current">{{ current() }}</div>
+      <figure class="card-visual">
+        <img [src]="cardSrc(current())" alt="Carta actual" />
+        <figcaption>Carta actual</figcaption>
+      </figure>
 
       @if (status() === 'playing') {
         <div class="actions">
@@ -19,7 +22,10 @@
       }
 
       @if (next() !== null) {
-        <div class="num next">Siguiente: {{ next() }}</div>
+        <figure class="card-visual fade-in">
+          <img [src]="cardSrc(next())" alt="Siguiente carta" />
+          <figcaption>Siguiente</figcaption>
+        </figure>
       }
     </div>
   </div>

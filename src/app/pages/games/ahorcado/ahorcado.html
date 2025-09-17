@@ -5,14 +5,31 @@
     <h2 class="h1">Ahorcado</h2>
     <p class="p">Adiviná la palabra. Tenés {{ attemptsLeft() }} intentos.</p>
 
+    <!-- Dibujo progresivo -->
+    <div class="hangman-wrap">
+      <svg viewBox="0 0 160 200" class="hangman">
+        <!-- base y horca -->
+        <line x1="10"  y1="190" x2="150" y2="190" class="gallow"/>
+        <line x1="35"  y1="190" x2="35"  y2="20"  class="gallow"/>
+        <line x1="35"  y1="20"  x2="110" y2="20"  class="gallow"/>
+        <line x1="110" y1="20"  x2="110" y2="40"  class="gallow"/>
+
+        <!-- partes del cuerpo: se muestran según errores -->
+        @if (errors() >= 1) { <circle cx="110" cy="55" r="15" class="man"/> }           <!-- cabeza -->
+        @if (errors() >= 2) { <line x1="110" y1="70" x2="110" y2="115" class="man"/> }  <!-- torso -->
+        @if (errors() >= 3) { <line x1="110" y1="80" x2="92"  y2="98"  class="man"/> }  <!-- brazo izq -->
+        @if (errors() >= 4) { <line x1="110" y1="80" x2="128" y2="98"  class="man"/> }  <!-- brazo der -->
+        @if (errors() >= 5) { <line x1="110" y1="115" x2="95"  y2="145" class="man"/> } <!-- pierna izq -->
+        @if (errors() >= 6) { <line x1="110" y1="115" x2="125" y2="145" class="man"/> } <!-- pierna der -->
+      </svg>
+    </div>
+
     <div class="word">{{ masked() }}</div>
 
     @if (status() === 'playing') {
       <div class="keys">
         @for (l of alphabet; track l) {
-          <button class="key"
-            [disabled]="isGuessed(l)"
-            (click)="guess(l)">{{ l }}</button>
+          <button class="key" [disabled]="isGuessed(l)" (click)="guess(l)">{{ l }}</button>
         }
       </div>
     } @else if (status() === 'won') {
