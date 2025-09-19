@@ -1,4 +1,3 @@
-// src/app/pages/login/login.ts
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -17,12 +16,12 @@ export class LoginPage {
   password = '';
   loading = false;
 
-  // 3 cuentas demo (Sprint 2 — “login rápido”)
-  demoUsers = [
+   demoUsers = [
     { alias: 'Tester 1', email: 'tester1@bitzone.com', pass: '123456' },
     { alias: 'Tester 2', email: 'tester2@bitzone.com', pass: '123456' },
     { alias: 'Tester 3', email: 'tester3@bitzone.com', pass: '123456' }
   ];
+    
 
   constructor(private auth: AuthService, private router: Router) {}
 

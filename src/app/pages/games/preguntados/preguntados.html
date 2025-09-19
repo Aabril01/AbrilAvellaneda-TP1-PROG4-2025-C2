@@ -1,0 +1,35 @@
+<section class="wrap">
+  <a routerLink="/games" class="back">← Volver</a>
+
+  <article class="card">
+    <h2>Preguntados</h2>
+    <p class="meta">Pregunta {{ idx() + 1 }} / {{ 10 }} — Puntaje: {{ score() }}</p>
+
+    <ng-container *ngIf="!finished(); else fin">
+      <h3 class="question">{{ current().q }}</h3>
+      <div class="answers">
+        <button
+          *ngFor="let opt of current().options; let i = index"
+          class="answer"
+          [class.correct]="answered() !== null && i === current().correct"
+          [class.wrong]="answered() !== null && i === answered() && i !== current().correct"
+          [disabled]="answered() !== null"
+          (click)="choose(i)">
+          {{ opt }}
+        </button>
+      </div>
+
+      <div class="actions">
+        <button class="next" (click)="nextOrFinish()" [disabled]="answered() === null">Siguiente</button>
+      </div>
+    </ng-container>
+
+    <ng-template #fin>
+      <div class="finish">
+        <h3>¡Fin del juego!</h3>
+        <p>Tu puntaje: <strong>{{ score() }}</strong></p>
+        <a routerLink="/games" class="back">Volver a juegos</a>
+      </div>
+    </ng-template>
+  </article>
+</section>

@@ -1,4 +1,3 @@
-// src/app/app.routes.ts
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
@@ -18,7 +17,6 @@ export const routes: Routes = [
     path: 'whoami',
     loadComponent: () => import('./pages/whoami/whoami').then(m => m.Whoami)
   },
-  // Lazy children (asegurate de crear los .routes.ts de abajo tal cual)
   {
     path: 'games',
     loadChildren: () =>

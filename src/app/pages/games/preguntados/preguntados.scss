@@ -1,0 +1,13 @@
+.wrap{max-width:920px;margin:2rem auto;padding:1rem}
+.back{display:inline-block;margin-bottom:1rem}
+.card{padding:1.5rem;border-radius:1rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08)}
+.meta{opacity:.8}
+.question{margin:1rem 0 1rem}
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+.answer{padding:.8rem 1rem;border-radius:.6rem;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);cursor:pointer}
+.answer:disabled{opacity:.8;cursor:default}
+.answer.correct{border-color:#2ecc71;background:rgba(46,204,113,.15)}
+.answer.wrong{border-color:#e74c3c;background:rgba(231,76,60,.15)}
+.actions{margin-top:1rem;display:flex;justify-content:flex-end}
+.next{padding:.6rem 1rem;border-radius:.6rem;background:#7c4dff;border:none;color:#fff}
+.finish{text-align:center}

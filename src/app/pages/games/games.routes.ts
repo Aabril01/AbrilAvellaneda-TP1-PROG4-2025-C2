@@ -1,42 +1,21 @@
 // src/app/pages/games/games.routes.ts
 import { Routes } from '@angular/router';
-import { Component } from '@angular/core';
 
-// 👇 ahora sí importamos los juegos reales desde sus archivos
+// Importamos cada juego desde su carpeta correspondiente
 import { AhorcadoPage } from './ahorcado/ahorcado';
 import { MayorMenorPage } from './mayor-menor/mayor-menor';
+import { PreguntadosPage } from './preguntados/preguntados';
+import { SudokuPage } from './sudoku/sudoku';
 
-@Component({
-  standalone: true,
-  template: `<section class="container card">
-    <h2 class="h1">Juegos</h2>
-    <p class="p">Elegí un juego desde el Home.</p>
-  </section>`
-})
-export class GamesHome {}
-
-@Component({
-  standalone: true,
-  template: `<section class="container card">
-    <h2 class="h1">Preguntados</h2>
-    <p class="p">Próximo sprint.</p>
-  </section>`
-})
-export class PreguntadosPage {}
-
-@Component({
-  standalone: true,
-  template: `<section class="container card">
-    <h2 class="h1">Sudoku (juego propio)</h2>
-    <p class="p">Próximo sprint.</p>
-  </section>`
-})
-export class SudokuPage {}
-
+// Rutas internas de la sección "games"
 export const GAMES_ROUTES: Routes = [
-  { path: '', component: GamesHome },
   { path: 'ahorcado', component: AhorcadoPage },
   { path: 'mayor-menor', component: MayorMenorPage },
   { path: 'preguntados', component: PreguntadosPage },
-  { path: 'sudoku', component: SudokuPage }
+  { path: 'sudoku', component: SudokuPage },
+  {
+    path: '',
+    pathMatch: 'full',
+    redirectTo: 'ahorcado' // si entrás a /games sin nada, redirige por defecto
+  }
 ];

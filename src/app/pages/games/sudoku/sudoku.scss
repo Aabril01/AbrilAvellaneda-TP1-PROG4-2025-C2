@@ -1,0 +1,16 @@
+.wrap{max-width:920px;margin:2rem auto;padding:1rem}
+.back{display:inline-block;margin-bottom:1rem}
+.panel{padding:1.5rem;border-radius:1rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08)}
+.msg{margin:.25rem 0 .75rem;opacity:.85}
+.msg.error{color:#ffd166}
+.board{display:grid;justify-content:center;margin:1rem 0;position:relative}
+.cells{display:grid;grid-template-columns:repeat(4,56px);grid-template-rows:repeat(4,56px);gap:6px}
+.cell{width:56px;height:56px;display:flex;align-items:center;justify-content:center;
+      border-radius:.6rem;border:1px solid rgba(255,255,255,.15);
+      background:rgba(255,255,255,.04);font-weight:700;font-size:1.2rem}
+.cell.fixed{background:rgba(124,77,255,.18);border-color:rgba(124,77,255,.3)}
+.cell.invalid{border-color:#e74c3c;box-shadow:0 0 0 2px rgba(231,76,60,.25) inset}
+.pad{display:flex;gap:.5rem;justify-content:center;margin-top:.75rem}
+.pad button{padding:.5rem .9rem;border-radius:.6rem;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05)}
+.pad .erase{background:#3a3a3a}
+.finish{margin-top:1rem;text-align:center}
