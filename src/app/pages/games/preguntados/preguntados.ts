@@ -1,53 +1,131 @@
-import { Component, signal, computed } from '@angular/core';
+import { Component, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ResultsService } from '../../../services/results.service';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
+import { ResultsService } from '../../../services/results.service';
 
-type Q = { q: string; options: string[]; correct: number };
+/** ===== Tipos ===== */
+type Q = { q: string; options: string[]; correctIndex: number };
+
+interface TriviaApiV2Question {
+  question: { text: string };
+  correctAnswer: string;
+  incorrectAnswers: string[];
+}
+
+interface LocalTriviaRow {
+  pregunta: string;
+  opciones: string[];
+  correcta: number; // índice dentro de opciones
+}
+
+/** ===== Utils ===== */
+function shuffle<T>(arr: T[]): T[] {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
 
 @Component({
   standalone: true,
   selector: 'ng-preguntados',
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, HttpClientModule, RouterLink],
   templateUrl: './preguntados.html',
   styleUrls: ['./preguntados.scss']
 })
 export class PreguntadosPage {
-  constructor(private results: ResultsService) {}
+  constructor(private http: HttpClient, private results: ResultsService) {}
 
-  private bank: Q[] = [
-    { q: '¿Capital de Francia?', options: ['Madrid','París','Roma','Berlín'], correct: 1 },
-    { q: '¿2 + 2 × 3 = ?', options: ['12','8','10','6'], correct: 1 },
-    { q: 'Lenguaje de estilos web', options: ['SQL','CSS','C#','Bash'], correct: 1 },
-    { q: 'Planeta rojo', options: ['Venus','Marte','Júpiter','Mercurio'], correct: 1 },
-    { q: 'Criatura marina mamífera', options: ['Tiburón','Pulpo','Delfín','Calamar'], correct: 2 },
-    { q: 'Autor de “Don Quijote”', options: ['Cervantes','Borges','García Márquez','Pizarnik'], correct: 0 },
-    { q: 'Monte más alto', options: ['Aconcagua','K2','Everest','Kilimanjaro'], correct: 2 },
-    { q: 'Símbolo químico del oro', options: ['Ag','Au','Fe','Pb'], correct: 1 },
-    { q: 'Sistema de control de versiones', options: ['Git','NPM','Webpack','Jest'], correct: 0 },
-    { q: 'Año bisiesto tiene', options: ['365','366','364','363'], correct: 1 },
-  ];
-
+  loading = signal(false);
+  error = signal<string>('');
+  questions = signal<Q[]>([]);
   idx = signal(0);
   score = signal(0);
-  answered = signal<number | null>(null); // opción elegida
-  finished = computed(() => this.idx() >= this.bank.length);
-  current = computed(() => this.bank[this.idx()]!);
+  answered = signal<number | null>(null);
+
+  finished = computed(() => this.idx() >= this.questions().length);
+  current  = computed(() => this.questions()[this.idx()]);
+
+  ngOnInit() {
+    this.fetchTriviaApiEs(10); // intenta API en español
+  }
+
+  /** Llama a The Trivia API (v2) en español */
+  private fetchTriviaApiEs(limit = 10) {
+    this.loading.set(true);
+    this.error.set('');
+
+    const url = `https://the-trivia-api.com/v2/questions?limit=${limit}&language=es&region=AR`;
+
+    this.http.get<TriviaApiV2Question[]>(url).subscribe({
+      next: (rows) => {
+        const mapped: Q[] = rows.map((item) => {
+          const correct = item.correctAnswer;
+          const options = shuffle<string>([correct, ...item.incorrectAnswers]);
+          return {
+            q: item.question?.text ?? '',
+            options,
+            correctIndex: options.findIndex((o: string) => o === correct)
+          };
+        }).filter(q => q.q && q.options.length === 4 && q.correctIndex >= 0);
+
+        if (!mapped.length) throw new Error('Respuesta inesperada');
+
+        this.questions.set(mapped);
+        this.idx.set(0);
+        this.score.set(0);
+        this.answered.set(null);
+      },
+      error: () => {
+        // Si la API falla, usa fallback local (no rompe la demo)
+        this.fetchLocalFallback(limit);
+      },
+      complete: () => this.loading.set(false)
+    });
+  }
+
+  /** Fallback local: usa /assets/trivia-es.json (con tipos explícitos) */
+  private fetchLocalFallback(amount = 10) {
+    this.http.get<LocalTriviaRow[]>('/assets/trivia-es.json').subscribe({
+      next: (rows) => {
+        const pool = rows.slice(0, amount);
+        const mapped: Q[] = pool.map((item: LocalTriviaRow) => {
+          const correct = item.opciones[item.correcta];       // string correcto
+          const options = shuffle<string>(item.opciones.slice()); // string[]
+          return {
+            q: item.pregunta,
+            options,
+            correctIndex: options.findIndex((o: string) => o === correct)
+          };
+        });
+
+        this.questions.set(mapped);
+        this.idx.set(0);
+        this.score.set(0);
+        this.answered.set(null);
+      },
+      error: () => this.error.set('No se pudo cargar la trivia (API y fallback fallaron).')
+    });
+  }
 
   choose(i: number) {
-    if (this.answered() !== null) return;
+    if (this.answered() !== null || !this.current()) return;
     this.answered.set(i);
-    if (i === this.current().correct) this.score.set(this.score() + 10);
+    if (i === this.current()!.correctIndex) this.score.set(this.score() + 1);
   }
 
   nextOrFinish() {
-    // pasar a la siguiente
     this.answered.set(null);
     this.idx.set(this.idx() + 1);
-
-    // si terminó, guardar resultado
-    if (this.idx() >= this.bank.length) {
+    if (this.idx() >= this.questions().length) {
       this.results.addResult('preguntados', this.score());
     }
+  }
+
+  retry() {
+    this.fetchTriviaApiEs(10);
   }
 }

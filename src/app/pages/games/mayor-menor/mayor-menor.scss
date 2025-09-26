@@ -1,22 +1,123 @@
-.board{
-  display:grid; gap:16px; align-items:center; justify-items:center;
+/* layout general */
+.mm-wrap {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 2rem 1rem 4rem;
 }
-.card-visual{
-  display:grid; gap:6px; justify-items:center; margin: 6px 0;
+
+/* encabezado */
+.mm-head {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: .5rem;
+  margin-bottom: 1rem;
+  text-align: center;
+
+  .link-back {
+    justify-self: start;
+    color: #a7a7ff;
+    text-decoration: none;
+    font-weight: 600;
+    padding: .25rem .5rem;
+    border-radius: .5rem;
+    &:hover { text-decoration: underline; }
+  }
+
+  .title {
+    font-size: clamp(1.3rem, 2.2vw, 1.8rem);
+    margin: 0;
+  }
+
+  .title small {
+    font-weight: 400;
+    opacity: .75;
+  }
+
+  .status {
+    margin: 0;
+    opacity: .85;
+  }
 }
-.card-visual img{
-  width:min(220px, 60vw);
-  aspect-ratio: 3/4; object-fit: contain;
-  background: rgba(255,255,255,.06);
-  border: 1px solid rgba(255,255,255,.12);
-  border-radius: 16px; padding: 10px;
-  box-shadow: 0 10px 30px rgba(0,0,0,.25);
+
+/* tarjeta central */
+.mm-card {
+  display: grid;
+  place-items: center;
+  gap: 1.25rem;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,.35);
 }
-.card-visual figcaption{ opacity:.8; font-size:.9rem; }
-.actions{ display:flex; gap:12px; }
-.result.ok{
-  margin-top:8px; background: rgba(34,197,94,.15);
-  border: 1px solid rgba(34,197,94,.35); padding:10px 12px; border-radius:10px;
+
+.mm-figure {
+  display: grid;
+  justify-items: center;
+  gap: .5rem;
 }
-.fade-in{ animation: fade .28s ease; }
-@keyframes fade{ from{opacity:0; transform:translateY(-4px)} to{opacity:1; transform:none} }
+
+.card-visual {
+  display: block;
+  width: min(260px, 60vw);
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 12px 30px rgba(0,0,0,.45);
+  background: #0e0e16;
+}
+
+/* botones */
+.mm-actions {
+  display: flex;
+  gap: .75rem;
+}
+
+.mm-btn {
+  appearance: none;
+  border: none;
+  padding: .7rem 1.1rem;
+  border-radius: 12px;
+  font-weight: 700;
+  letter-spacing: .2px;
+  cursor: pointer;
+  background: #2b2b3f;
+  color: #e8e8ff;
+  box-shadow: 0 6px 20px rgba(0,0,0,.35);
+  transition: transform .05s ease, filter .2s ease, background .2s ease;
+
+  &:hover { filter: brightness(1.05); }
+  &:active { transform: translateY(1px); }
+
+  &.primary {
+    background: linear-gradient(135deg, #6a5cff, #a057ff);
+  }
+
+  &.ghost {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,.2);
+  }
+}
+
+/* pantalla de fin */
+.mm-finish {
+  text-align: center;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px;
+  padding: 2rem 1.5rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,.35);
+
+  h2 { margin-top: 0; }
+  .finish-actions {
+    margin-top: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: .75rem;
+    justify-content: center;
+  }
+}
+
+/* helper “card” cuando se usa fuera del grid */
+.card {
+  border-radius: 16px;
+}

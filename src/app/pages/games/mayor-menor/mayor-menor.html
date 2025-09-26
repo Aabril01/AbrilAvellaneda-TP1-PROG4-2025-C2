@@ -1,32 +1,44 @@
-<section class="container">
-  <a routerLink="/games" class="btn ghost" style="margin-bottom:12px;">← Volver</a>
+<section class="mm-wrap container">
 
-  <div class="card">
-    <h2 class="h1">Mayor o menor (naipes españoles)</h2>
-    <p class="p">Ronda {{ rounds() }}/{{ maxRounds }} — Puntaje: <b>{{ score() }}</b></p>
+  <!-- barra superior: volver y estado -->
+  <header class="mm-head">
+    <a routerLink="/games" class="link-back">← Volver</a>
+    <h1 class="title">Mayor o menor <small>(naipes españoles, reglas del Truco)</small></h1>
+    <p class="status">
+      Ronda <b>{{ ronda() }}</b>/10 — Puntaje: <b>{{ score() }}</b>
+    </p>
+  </header>
 
-    <div class="board">
-      <figure class="card-visual">
-        <img [src]="cardSrc(current())" alt="Carta actual" />
-        <figcaption>Carta actual</figcaption>
-      </figure>
+  <!-- carta centrada -->
+  <article class="mm-card" *ngIf="!terminado(); else fin">
+    <figure class="mm-figure">
+      <img
+        [src]="actual().img"
+        alt="Carta actual"
+        class="card-visual"
+        width="260" height="380"
+        loading="eager"
+      />
+      <figcaption>Carta actual</figcaption>
+    </figure>
 
-      @if (status() === 'playing') {
-        <div class="actions">
-          <button class="btn primary" (click)="play('menor')">Menor</button>
-          <button class="btn primary" (click)="play('mayor')">Mayor</button>
-        </div>
-      } @else {
-        <div class="result ok">Partida finalizada. Tu puntaje: <b>{{ score() }}</b></div>
-        <button class="btn primary" (click)="reset()">Jugar de nuevo</button>
-      }
-
-      @if (next() !== null) {
-        <figure class="card-visual fade-in">
-          <img [src]="cardSrc(next())" alt="Siguiente carta" />
-          <figcaption>Siguiente</figcaption>
-        </figure>
-      }
+    <div class="mm-actions">
+      <button class="mm-btn" (click)="elegir('menor')">Menor</button>
+      <button class="mm-btn primary" (click)="elegir('mayor')">Mayor</button>
     </div>
-  </div>
+  </article>
+
+  <!-- fin del juego -->
+  <ng-template #fin>
+    <div class="mm-finish card">
+      <h2>¡Fin del juego!</h2>
+      <p>Puntaje final: <b>{{ score() }}</b> / 10</p>
+      <div class="finish-actions">
+        <button class="mm-btn" (click)="retry()">Jugar de nuevo</button>
+        <a routerLink="/results" class="mm-btn ghost">Ver resultados</a>
+        <a routerLink="/games" class="mm-btn ghost">Volver a Juegos</a>
+      </div>
+    </div>
+  </ng-template>
+
 </section>

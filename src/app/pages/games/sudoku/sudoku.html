@@ -1,42 +1,35 @@
 <section class="wrap">
-  <a routerLink="/games" class="back">← Volver</a>
-
-  <article class="panel">
+  <article class="card">
     <h2>Sudoku (Mini 4×4)</h2>
-    <p class="msg" [class.error]="message()">{{ message() || 'Completá el tablero con números del 1 al 4' }}</p>
+    <p>Completá el tablero con números del 1 al 4</p>
+    <p class="meta">Tiempo: {{ elapsedSec() }}s</p>
 
     <div class="board">
-      <button
+      <div
         *ngFor="let row of grid(); let r = index"
         class="row"
-        disabled></button>
-
-      <div class="cells">
-        <button
-          *ngFor="let row of grid(); let r = index"
-          class="row-cells">
-          <button
-            *ngFor="let cell of row; let c = index"
-            class="cell"
-            [class.fixed]="cell.fixed"
-            [class.invalid]="isInvalid(r,c)"
-            (click)="select(r,c)">
-            {{ cell.value ?? '' }}
-          </button>
-        </button>
+        >
+        <div
+          *ngFor="let cell of row; let c = index"
+          class="cell"
+          [class.fixed]="cell.fixed"
+          [class.selected]="selected()?.r===r && selected()?.c===c"
+          [class.invalid]="isInvalid(r,c)"
+          (click)="select(r,c)"
+        >
+          {{ cell.value ?? '' }}
+        </div>
       </div>
     </div>
 
-    <div class="pad">
+    <div class="message" *ngIf="message()">{{ message() }}</div>
+
+    <div class="kb">
       <button (click)="setValue(1)">1</button>
       <button (click)="setValue(2)">2</button>
       <button (click)="setValue(3)">3</button>
       <button (click)="setValue(4)">4</button>
-      <button class="erase" (click)="erase()">Borrar</button>
-    </div>
-
-    <div class="finish" *ngIf="completed()">
-      <strong>¡Completado! Se guardó tu puntaje.</strong>
+      <button class="danger" (click)="erase()">Borrar</button>
     </div>
   </article>
 </section>

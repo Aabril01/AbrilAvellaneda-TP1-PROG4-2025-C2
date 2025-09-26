@@ -1,46 +1,49 @@
-<div class="container py-4">
-  <h1 class="mb-3">Quién soy</h1>
+<section class="container card">
+  <h2 class="h1">{{ titulo }}</h2>
 
-  <!-- Loading -->
-  <div *ngIf="loading">Cargando…</div>
-
-  <!-- Error -->
-  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
-
-  <!-- Perfil -->
-  <div *ngIf="me" class="row g-4 align-items-center">
-    <div class="col-auto">
-      <img [src]="me.avatar_url"
-           alt="Avatar"
-           class="rounded-circle border border-2 border-light shadow"
-           width="120"
-           height="120" />
-    </div>
-    <div class="col">
-      <h2 class="mb-1">{{ me.name || me.login }}</h2>
-      <p class="mb-1">{{ me.bio }}</p>
-      <p class="mb-1">
-        <strong>Repos:</strong> {{ me.public_repos }} ·
-        <strong>Followers:</strong> {{ me.followers }} ·
-        <strong>Siguiendo:</strong> {{ me.following }}
-      </p>
-      <a [href]="me.html_url"
-         target="_blank"
-         class="btn btn-outline-light btn-sm">Ver perfil en GitHub</a>
+  <!-- Datos básicos -->
+  <div *ngIf="usuario as u; else sinUsuario" class="who">
+    <div class="who-header">
+      <img src="/bitzone.png" alt="Avatar" class="avatar" />
+      <div>
+        <h3 class="h2">{{ u.nombre }}</h3>
+        <p class="p">{{ u.descripcion }}</p>
+        <a class="btn" [href]="u.githubUrl" target="_blank" rel="noopener">
+          Ver perfil en GitHub
+        </a>
+      </div>
     </div>
   </div>
 
-  <hr class="my-4" />
+  <ng-template #sinUsuario>
+    <p class="p">No hay información del usuario disponible.</p>
+  </ng-template>
+</section>
 
-  <!-- Juego propio -->
-  <h3>Mi juego propio</h3>
-  <p>
-    Voy a desarrollar un <strong>Sudoku</strong>:
+<!-- Juegos y reglas (Sprint 4) -->
+<section class="container card">
+  <h3 class="h2">Juegos del proyecto</h3>
+  <p class="p">
+    A continuación se listan los cuatro juegos con su descripción y reglas. Cada
+    uno guarda resultados en la base de datos (o fallback local si no hay claves).
   </p>
-  <ul>
-    <li>Tablero de 9×9 dividido en subcuadrículas de 3×3.</li>
-    <li>Objetivo: completar con números del 1 al 9 sin repetir en fila, columna ni bloque.</li>
-    <li>Funciones: selección de celda y número, validaciones visuales, temporizador y conteo de errores.</li>
-    <li>Condiciones: ganar al completar correctamente; perder si se excede el límite de errores o tiempo.</li>
-  </ul>
-</div>
+
+  <div class="games-grid">
+    <article class="game" *ngFor="let g of juegos">
+      <header class="game-head">
+        <h4 class="h3">{{ g.title }}</h4>
+        <a [routerLink]="g.route" class="link">Jugar →</a>
+      </header>
+
+      <p class="p">{{ g.summary }}</p>
+
+      <ul class="rules">
+        <li *ngFor="let r of g.rules">{{ r }}</li>
+      </ul>
+    </article>
+  </div>
+
+  <div class="actions">
+    <a routerLink="/" class="btn">Volver al inicio</a>
+  </div>
+</section>

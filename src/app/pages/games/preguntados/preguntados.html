@@ -2,34 +2,47 @@
   <a routerLink="/games" class="back">← Volver</a>
 
   <article class="card">
-    <h2>Preguntados</h2>
-    <p class="meta">Pregunta {{ idx() + 1 }} / {{ 10 }} — Puntaje: {{ score() }}</p>
+    <h2>Preguntados (API)</h2>
 
-    <ng-container *ngIf="!finished(); else fin">
-      <h3 class="question">{{ current().q }}</h3>
-      <div class="answers">
-        <button
-          *ngFor="let opt of current().options; let i = index"
-          class="answer"
-          [class.correct]="answered() !== null && i === current().correct"
-          [class.wrong]="answered() !== null && i === answered() && i !== current().correct"
-          [disabled]="answered() !== null"
-          (click)="choose(i)">
-          {{ opt }}
-        </button>
-      </div>
+    <div *ngIf="loading()">Cargando preguntas…</div>
+    <div *ngIf="error()">{{ error() }}</div>
 
-      <div class="actions">
-        <button class="next" (click)="nextOrFinish()" [disabled]="answered() === null">Siguiente</button>
-      </div>
+    <ng-container *ngIf="!loading() && !error()">
+      <p class="meta" *ngIf="!finished()">
+        Pregunta {{ idx() + 1 }} / {{ questions().length }} — Correctas: {{ score() }}
+      </p>
+
+      <ng-container *ngIf="!finished(); else fin">
+        <!-- clave: 'cur' ya está definido, por eso NO usamos '?.' -->
+        <ng-container *ngIf="current() as cur">
+          <h3 class="question">{{ cur.q }}</h3>
+
+          <div class="answers">
+            <button
+              *ngFor="let opt of cur.options; let i = index"
+              class="answer"
+              [class.correct]="answered() !== null && i === cur.correctIndex"
+              [class.wrong]="answered() !== null && i === answered() && i !== cur.correctIndex"
+              [disabled]="answered() !== null"
+              (click)="choose(i)">
+              {{ opt }}
+            </button>
+          </div>
+
+          <div class="actions">
+            <button class="next" (click)="nextOrFinish()" [disabled]="answered() === null">Siguiente</button>
+          </div>
+        </ng-container>
+      </ng-container>
+
+      <ng-template #fin>
+        <div class="finish">
+          <h3>¡Fin del juego!</h3>
+          <p>Correctas: <strong>{{ score() }}</strong> de {{ questions().length }}</p>
+          <button class="next" (click)="retry()">Jugar de nuevo</button>
+          <a routerLink="/results" class="back">Ver resultados</a>
+        </div>
+      </ng-template>
     </ng-container>
-
-    <ng-template #fin>
-      <div class="finish">
-        <h3>¡Fin del juego!</h3>
-        <p>Tu puntaje: <strong>{{ score() }}</strong></p>
-        <a routerLink="/games" class="back">Volver a juegos</a>
-      </div>
-    </ng-template>
   </article>
 </section>

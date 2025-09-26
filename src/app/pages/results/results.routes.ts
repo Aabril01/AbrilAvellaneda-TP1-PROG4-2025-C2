@@ -1,49 +1,70 @@
-// src/app/pages/results/results.routes.ts
+
 import { Routes } from '@angular/router';
-import { Component, OnInit } from '@angular/core';
-import { ResultsService } from '../../services/results.service';
-import { DatePipe } from '@angular/common';
+import { Component, OnInit, signal } from '@angular/core';
+import { CommonModule, DatePipe } from '@angular/common';
+import { ResultsService, GameResult } from '../../services/results.service';
+import { Signal } from '@angular/core'; 
 
 @Component({
   standalone: true,
-  imports: [DatePipe],
+  imports: [CommonModule, DatePipe],
   template: `
   <section class="container">
     <div class="card">
-      <h2 class="h1">Resultados</h2>
+      <h2 class="h1">Resultados (Ranking por juego)</h2>
 
-      @if (svc.loading()) {
-        <p class="p">Cargando…</p>
-      } @else if (svc.results().length === 0) {
-        <p class="p">Aún no hay resultados.</p>
-      } @else {
-        <div style="overflow:auto;">
-          <table class="res-table">
-            <thead><tr><th>Fecha</th><th>Juego</th><th>Puntaje</th></tr></thead>
-            <tbody>
-              @for (r of svc.results(); track r.id) {
-                <tr>
-                  <td>{{ r.created_at | date:'short' }}</td>
-                  <td style="text-transform: capitalize;">{{ r.game }}</td>
-                  <td><b>{{ r.score }}</b></td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        </div>
+      <ng-container *ngFor="let g of games">
+        <h3 class="h2" style="margin-top:1rem;text-transform:capitalize">{{ g }}</h3>
 
-        <button class="btn ghost" (click)="clear()">Borrar mis resultados (dev)</button>
-      }
-      @if (svc.error()) { <p class="error">{{ svc.error() }}</p> }
+        <div *ngIf="loading()">Cargando…</div>
+        <table class="res-table" *ngIf="!loading()">
+          <thead>
+            <tr>
+              <th>Jugador</th>
+              <th>Puntaje</th>
+              <th *ngIf="g==='sudoku'">Tiempo (s)</th>
+              <th>Fecha</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let r of data[g]">
+              <td>{{ r.player_email || r.user_id }}</td>
+              <td><b>{{ r.score }}</b></td>
+              <td *ngIf="g==='sudoku'">{{ r.time_seconds ?? '-' }}</td>
+              <td>{{ r.created_at | date:'short' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </ng-container>
+
+      <p class="error" *ngIf="error()">{{ error() }}</p>
     </div>
   </section>
   `,
-  styleUrls: ['./results.scss']
+  styles: [`
+    .res-table{width:100%;border-collapse:collapse;margin:.5rem 0 1rem}
+    .res-table th,.res-table td{padding:.5rem;border-bottom:1px solid rgba(255,255,255,.08);text-align:left}
+  `]
 })
 class ResultsHome implements OnInit {
-  constructor(public svc: ResultsService) {}
-  ngOnInit() { this.svc.listMine(); }
-  clear() { this.svc.clearMine(); }
+  games: Array<'ahorcado'|'mayor-menor'|'preguntados'|'sudoku'> = ['ahorcado','mayor-menor','preguntados','sudoku'];
+  data: Record<string, GameResult[]> = { 'ahorcado': [], 'mayor-menor': [], 'preguntados': [], 'sudoku': [] };
+
+  loading = signal(false);
+  error!: Signal<string>;
+
+  constructor(private resultsSvc: ResultsService) {
+    this.error = this.resultsSvc.error; 
+  }
+
+  async ngOnInit() {
+    this.loading.set(true);
+    for (const g of this.games) {
+      const rows = await this.resultsSvc.listLeaderboard(g);
+      this.data[g] = rows;
+    }
+    this.loading.set(false);
+  }
 }
 
 export const RESULTS_ROUTES: Routes = [

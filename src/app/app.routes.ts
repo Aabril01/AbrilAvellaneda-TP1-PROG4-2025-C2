@@ -15,7 +15,7 @@ export const routes: Routes = [
   },
   {
     path: 'whoami',
-    loadComponent: () => import('./pages/whoami/whoami').then(m => m.Whoami)
+    loadComponent: () => import('./pages/whoami/whoami').then(m => m.WhoamiPage)
   },
   {
     path: 'games',
