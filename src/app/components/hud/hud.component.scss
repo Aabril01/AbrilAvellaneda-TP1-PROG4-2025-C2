@@ -1,0 +1,9 @@
+/* src/app/components/hud/hud.component.scss */
+.hud { margin-bottom: 1rem; }
+.hud-title { font-size: 28px; margin: 0 0 12px; }
+.hud-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; }
+.hud-box { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); border-radius: 12px; padding: 12px 16px; }
+.hud-label { font-size: 12px; opacity: .7; }
+.hud-value { font-size: 20px; font-weight: 700; margin-top: 4px; }
+.hud-bar { height: 6px; background: rgba(255,255,255,.06); border-radius: 6px; overflow: hidden; margin-top: 8px; }
+.hud-bar-fill { height: 100%; background: linear-gradient(90deg,#8b5cf6,#22d3ee); }

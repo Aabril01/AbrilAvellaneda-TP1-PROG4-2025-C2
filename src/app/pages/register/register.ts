@@ -3,7 +3,6 @@ import { Component } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
-import { NgIf } from '@angular/common';
 
 @Component({
   standalone: true,
@@ -20,10 +19,17 @@ export class RegisterPage {
 
   async onSubmit(f: NgForm) {
     if (this.loading || !f.valid) return;
+
     this.loading = true;
-    const ok = await this.auth.register(this.model);
-    this.loading = false;
-    if (ok) this.router.navigate(['/']);
+    try {
+      const ok = await this.auth.register(this.model);
+      if (ok) {
+        // Registro OK -> ir a LOGIN (no queda logueada)
+        this.router.navigateByUrl('/login');
+      }
+    } finally {
+      this.loading = false; // <- siempre apagamos el spinner
+    }
   }
 
   get errorMsg() { return this.auth.lastError(); }

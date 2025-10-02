@@ -2,47 +2,113 @@
   <a routerLink="/games" class="back">← Volver</a>
 
   <article class="card">
-    <h2>Preguntados (API)</h2>
+    <h2 class="title">Preguntados</h2>
 
-    <div *ngIf="loading()">Cargando preguntas…</div>
-    <div *ngIf="error()">{{ error() }}</div>
+    <!-- HUD -->
+    <div class="hud">
+      <div class="hud-box">
+        <div class="hud-label">Intentos</div>
+        <div class="hud-value">{{ intentos() }} / {{ INTENTOS_MAX }}</div>
+        <div class="hud-bar">
+          <div
+            class="hud-bar-fill"
+            [style.width.%]="(intentos() / INTENTOS_MAX) * 100">
+          </div>
+        </div>
+      </div>
 
-    <ng-container *ngIf="!loading() && !error()">
-      <p class="meta" *ngIf="!finished()">
-        Pregunta {{ idx() + 1 }} / {{ questions().length }} — Correctas: {{ score() }}
+      <div class="hud-box">
+        <div class="hud-label">Aciertos</div>
+        <div class="hud-value">{{ aciertos() }}</div>
+      </div>
+
+      <div class="hud-box">
+        <div class="hud-label">Puntos</div>
+        <div class="hud-value">{{ puntos() }}</div>
+      </div>
+
+      <div class="hud-box">
+        <div class="hud-label">Tiempo</div>
+        <div class="hud-value">{{ elapsed() }} s</div>
+      </div>
+    </div>
+
+    <div *ngIf="error()" class="error">{{ error() }}</div>
+
+    <!-- Ruleta -->
+    <div class="wheel-wrap" *ngIf="!questions().length && !loading()">
+      <h3 class="subtitle">Elegí categoría al azar</h3>
+
+      <div class="wheel" [class.spin]="spinning()">
+        <div class="slice s0"><span>🎬</span></div>
+        <div class="slice s1"><span>🧪</span></div>
+        <div class="slice s2"><span>🗺️</span></div>
+        <div class="slice s3"><span>🏛️</span></div>
+        <div class="slice s4"><span>🎨</span></div>
+        <div class="slice s5"><span>🏅</span></div>
+      </div>
+      <div class="needle">▲</div>
+
+      <button class="btn primary" (click)="spinWheel()" [disabled]="spinning()">
+        Girar
+      </button>
+
+      <!-- ejemplo seguro -->
+    <p *ngIf="selectedCat() as cat" class="picked">
+      Categoría: <b>{{ cat.emoji }} {{ cat.name }}</b>
+    </p>
+
+    <!-- y cuando muestres preguntas: -->
+    <ng-container *ngIf="questions().length; else espera">
+      <!-- usar current() con confianza -->
+    </ng-container>
+    <ng-template #espera></ng-template>
+
+
+      <!-- Si querés usar imágenes en lugar de emoji:
+           Reemplazá cada <span> por <img src="/assets/ruleta/arte.png">
+           y ajustá el CSS .slice span -> .slice img { width:48px; height:48px; } -->
+    </div>
+
+    <!-- Preguntas -->
+    <ng-container *ngIf="questions().length">
+      <p class="meta">
+        Pregunta {{ idx() + 1 }} / {{ questions().length }}
       </p>
 
-      <ng-container *ngIf="!finished(); else fin">
-        <!-- clave: 'cur' ya está definido, por eso NO usamos '?.' -->
-        <ng-container *ngIf="current() as cur">
-          <h3 class="question">{{ cur.q }}</h3>
+      <h3 class="question">{{ current().q }}</h3>
 
-          <div class="answers">
-            <button
-              *ngFor="let opt of cur.options; let i = index"
-              class="answer"
-              [class.correct]="answered() !== null && i === cur.correctIndex"
-              [class.wrong]="answered() !== null && i === answered() && i !== cur.correctIndex"
-              [disabled]="answered() !== null"
-              (click)="choose(i)">
-              {{ opt }}
-            </button>
-          </div>
+      <div class="answers">
+        <button
+          *ngFor="let opt of current().options; let i = index"
+          class="answer"
+          [class.correct]="answered() !== null && i === current().correctIndex"
+          [class.wrong]="answered() !== null && i === answered() && i !== current().correctIndex"
+          [disabled]="answered() !== null"
+          (click)="choose(i)">
+          {{ opt }}
+        </button>
+      </div>
 
-          <div class="actions">
-            <button class="next" (click)="nextOrFinish()" [disabled]="answered() === null">Siguiente</button>
-          </div>
-        </ng-container>
-      </ng-container>
-
-      <ng-template #fin>
-        <div class="finish">
-          <h3>¡Fin del juego!</h3>
-          <p>Correctas: <strong>{{ score() }}</strong> de {{ questions().length }}</p>
-          <button class="next" (click)="retry()">Jugar de nuevo</button>
-          <a routerLink="/results" class="back">Ver resultados</a>
-        </div>
-      </ng-template>
+      <div class="actions">
+        <button class="btn" (click)="retry()">Reiniciar</button>
+        <button class="btn primary" (click)="next()" [disabled]="answered() === null">
+          {{ idx() === questions().length - 1 ? 'Finalizar' : 'Siguiente' }}
+        </button>
+      </div>
     </ng-container>
+
+    <!-- Fin -->
+    <div class="finish" *ngIf="finished()">
+      <h3>¡Fin del juego!</h3>
+      <p>
+        Puntos: <b>{{ puntos() }}</b> — Aciertos: <b>{{ aciertos() }}</b> — Tiempo:
+        <b>{{ elapsed() }}s</b>
+      </p>
+      <div class="actions">
+        <button class="btn" (click)="retry()">Jugar de nuevo</button>
+        <a routerLink="/results" class="btn ghost">Ver resultados</a>
+      </div>
+    </div>
   </article>
 </section>

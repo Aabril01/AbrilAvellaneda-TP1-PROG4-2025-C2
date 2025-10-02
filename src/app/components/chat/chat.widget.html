@@ -1,0 +1,23 @@
+<!-- src/app/components/chat/chat.widget.html -->
+<div class="chat-fab" (click)="open=!open">Chat</div>
+
+<div class="chat-panel" *ngIf="open">
+  <div class="chat-head">
+    <b>Chat</b>
+    <button class="x" (click)="open=false">✕</button>
+  </div>
+
+  <div class="chat-body">
+    <div *ngFor="let m of chat.msgs()">
+      <div class="msg">
+        <div class="from">{{ m.email || 'Anónimo' }}</div>
+        <div class="text">{{ m.text }}</div>
+      </div>
+    </div>
+  </div>
+
+  <form class="chat-send" (ngSubmit)="send()">
+    <input [(ngModel)]="text" name="t" placeholder="Escribe un mensaje..." />
+    <button type="submit">Enviar</button>
+  </form>
+</div>

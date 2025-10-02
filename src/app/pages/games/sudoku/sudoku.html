@@ -1,22 +1,42 @@
 <section class="wrap">
   <article class="card">
-    <h2>Sudoku (Mini 4×4)</h2>
-    <p>Completá el tablero con números del 1 al 4</p>
-    <p class="meta">Tiempo: {{ elapsedSec() }}s</p>
+    <h2>Sudoku</h2>
+
+    <!-- HUD -->
+    <div class="hud">
+      <div class="hud-box">
+        <div class="hud-label">Tiempo</div>
+        <div class="hud-value">{{ elapsedSec() }} s</div>
+      </div>
+      <div class="hud-box">
+        <div class="hud-label">Restante</div>
+        <div class="hud-value">{{ timeLeft() }} s</div>
+        <div class="hud-bar">
+          <div class="hud-bar-fill" [style.width.%]="(timeLeft()/180)*100"></div>
+        </div>
+      </div>
+      <div class="hud-box">
+        <div class="hud-label">Celdas</div>
+        <div class="hud-value">{{ filled() }} / {{ 6*6 }}</div>
+        <div class="hud-bar">
+          <div class="hud-bar-fill" [style.width.%]="progressPct()"></div>
+        </div>
+      </div>
+      <div class="hud-box">
+        <div class="hud-label">Errores</div>
+        <div class="hud-value">{{ errors() }}</div>
+      </div>
+    </div>
 
     <div class="board">
-      <div
-        *ngFor="let row of grid(); let r = index"
-        class="row"
-        >
+      <div *ngFor="let row of grid(); let r = index" class="row">
         <div
           *ngFor="let cell of row; let c = index"
           class="cell"
           [class.fixed]="cell.fixed"
           [class.selected]="selected()?.r===r && selected()?.c===c"
           [class.invalid]="isInvalid(r,c)"
-          (click)="select(r,c)"
-        >
+          (click)="select(r,c)">
           {{ cell.value ?? '' }}
         </div>
       </div>
@@ -25,11 +45,18 @@
     <div class="message" *ngIf="message()">{{ message() }}</div>
 
     <div class="kb">
-      <button (click)="setValue(1)">1</button>
-      <button (click)="setValue(2)">2</button>
-      <button (click)="setValue(3)">3</button>
-      <button (click)="setValue(4)">4</button>
+      <button *ngFor="let n of keypad" (click)="setValue(n)">{{ n }}</button>
       <button class="danger" (click)="erase()">Borrar</button>
     </div>
   </article>
+
+  <div class="sudoku-finish" *ngIf="gameOver()">
+    <h3 *ngIf="win(); else perdio">¡Completado!</h3>
+    <ng-template #perdio><h3>Tiempo agotado</h3></ng-template>
+
+    <div class="actions">
+      <button class="btn" (click)="retry()">Jugar de nuevo</button>
+      <button class="btn btn-secondary" (click)="volverAlInicio()">Volver</button>
+    </div>
+  </div>
 </section>

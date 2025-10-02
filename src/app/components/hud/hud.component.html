@@ -1,0 +1,29 @@
+<!-- src/app/components/hud/hud.component.html -->
+<div class="hud">
+  <h2 class="hud-title">{{ title }}</h2>
+
+  <div class="hud-row">
+    <div class="hud-box">
+      <div class="hud-label">Intentos</div>
+      <div class="hud-value">{{ left }} / {{ attempts }}</div>
+      <div class="hud-bar">
+        <div class="hud-bar-fill" [style.width.%]="attempts ? (left*100/attempts) : 0"></div>
+      </div>
+    </div>
+
+    <div class="hud-box">
+      <div class="hud-label">Aciertos</div>
+      <div class="hud-value">{{ hits }}</div>
+    </div>
+
+    <div class="hud-box">
+      <div class="hud-label">Puntos</div>
+      <div class="hud-value">{{ points }}</div>
+    </div>
+
+    <div class="hud-box">
+      <div class="hud-label">Tiempo</div>
+      <div class="hud-value">{{ time }}</div>
+    </div>
+  </div>
+</div>

@@ -121,3 +121,38 @@
 .card {
   border-radius: 16px;
 }
+.wrap { max-width: 1100px; margin: 0 auto; padding: 1rem; }
+.back { display:inline-block; margin-bottom:.5rem; }
+.card { background: rgba(255,255,255,0.03); border-radius: 16px; padding: 1.25rem; box-shadow: 0 10px 30px rgba(0,0,0,.25); }
+
+.title { text-align: center; margin: .25rem 0 1rem; }
+
+.hud {
+  display: grid; grid-template-columns: repeat(4,1fr); gap: .75rem; margin-bottom: 1rem;
+  .hud-box { background: rgba(255,255,255,0.04); border-radius: 12px; padding: .75rem; text-align: center; }
+  .hud-label { opacity:.8; font-size:.85rem; }
+  .hud-value { font-size:1.25rem; font-weight:700; margin-top:.25rem; }
+  .hud-bar { height:6px; background: rgba(255,255,255,.08); border-radius:999px; overflow:hidden; margin-top:.5rem; }
+  .hud-bar-fill { height:100%; background: linear-gradient(90deg,#8a73ff,#78e0ff); }
+}
+
+.board {
+  display:flex; justify-content:center; align-items:flex-start; gap:3rem; padding:2rem 0;
+  .slot { text-align:center; }
+  img { width:150px; border-radius:12px; box-shadow: 0 6px 20px rgba(0,0,0,.4); }
+  .card-back {
+    width:150px; height:220px; border-radius:12px; box-shadow: 0 6px 20px rgba(0,0,0,.4);
+    background:
+      radial-gradient(circle at 30% 30%, #a2b, transparent 60%),
+      radial-gradient(circle at 70% 70%, #26d, transparent 55%),
+      #0e1320;
+    border:2px solid rgba(255,255,255,.15);
+  }
+}
+
+.actions { display:flex; gap:.75rem; justify-content:center; }
+.btn { padding:.6rem 1rem; border-radius:10px; border:none; cursor:pointer; background:#2a2f3d; color:#fff; }
+.btn.primary { background:#7b5cff; }
+.btn.ghost { background:transparent; border:1px solid rgba(255,255,255,.2); }
+
+.finish { text-align:center; padding:1rem 0; }

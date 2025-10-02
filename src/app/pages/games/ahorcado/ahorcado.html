@@ -1,8 +1,36 @@
+
 <section class="container">
   <a routerLink="/games" class="btn ghost" style="margin-bottom:12px;">← Volver</a>
 
   <div class="card">
     <h2 class="h1">Ahorcado</h2>
+
+    <!-- HUD -->
+    <div class="hud" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:8px 0 16px;">
+      <div class="hud-box" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:10px;text-align:center;">
+        <div class="hud-label" style="font-size:12px;opacity:.8;">Intentos</div>
+        <div class="hud-value" style="font-size:20px;font-weight:700;">{{ errors() }} / 6</div>
+        <div class="hud-bar" style="height:6px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden;margin-top:8px;">
+          <div class="hud-bar-fill" [style.width.%]="(errors()/6)*100" style="height:100%;background:linear-gradient(90deg,#8a73ff,#78e0ff);"></div>
+        </div>
+      </div>
+
+      <div class="hud-box" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:10px;text-align:center;">
+        <div class="hud-label" style="font-size:12px;opacity:.8;">Aciertos</div>
+        <div class="hud-value" style="font-size:20px;font-weight:700;">{{ corrects() }}</div>
+      </div>
+
+      <div class="hud-box" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:10px;text-align:center;">
+        <div class="hud-label" style="font-size:12px;opacity:.8;">Puntos</div>
+        <div class="hud-value" style="font-size:20px;font-weight:700;">{{ points() }}</div>
+      </div>
+
+      <div class="hud-box" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:10px;text-align:center;">
+        <div class="hud-label" style="font-size:12px;opacity:.8;">Tiempo</div>
+        <div class="hud-value" style="font-size:20px;font-weight:700;">{{ elapsedSec() }} s</div>
+      </div>
+    </div>
+
     <p class="p">Adiviná la palabra. Tenés {{ attemptsLeft() }} intentos.</p>
 
     <!-- Dibujo progresivo -->
