@@ -1,4 +1,4 @@
-// src/app/components/hud/hud.component.ts
+
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 

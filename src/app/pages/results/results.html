@@ -1,96 +1,28 @@
-<section class="container card">
-  <header class="results-head">
-    <h1>Resultados <small>(Ranking por juego)</small></h1>
-    <div class="actions">
-      <a routerLink="/" class="btn ghost">← Volver al Inicio</a>
-      <button class="btn" (click)="clearDev()">Borrar mis resultados (dev)</button>
+<section class="wrap">
+  <h2>Resultados (Ranking por juego)</h2>
+
+  <div *ngIf="loading()">Cargando...</div>
+
+  <div *ngIf="!loading() && (rows()?.length ?? 0) === 0">
+    <p>No hay resultados todavía.</p>
+  </div>
+
+  <div *ngIf="!loading() && (rows()?.length ?? 0) > 0" class="table">
+    <div class="row header">
+      <div>Juego</div>
+      <div>Puntaje</div>
+      <div>Fecha</div>
     </div>
-  </header>
 
-  <div *ngIf="loading(); else contenido" class="muted">Cargando…</div>
-  <ng-template #contenido>
-    <p *ngIf="error()" class="error">{{ error() }}</p>
+    <div class="row" *ngFor="let r of rows()">
+      <div>{{ r.game }}</div>
+      <div>{{ r.score }}</div>
+      <div>{{ r.created_at | date:'short' }}</div>
+    </div>
+  </div>
 
-    <!-- AHORCADO -->
-    <section class="block">
-      <h2>Ahorcado</h2>
-      <table class="grid">
-        <thead>
-          <tr><th>Jugador</th><th>Puntaje</th><th>Fecha</th></tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let r of ahorcado()">
-            <td>{{ r.user_id | slice:0:6 }}…</td>
-            <td>{{ r.score }}</td>
-            <td>{{ r.created_at | date:'short' }}</td>
-          </tr>
-          <tr *ngIf="ahorcado().length === 0">
-            <td colspan="3" class="muted">Aún no hay resultados.</td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
-
-    <!-- MAYOR-MENOR -->
-    <section class="block">
-      <h2>Mayor-Menor</h2>
-      <table class="grid">
-        <thead>
-          <tr><th>Jugador</th><th>Puntaje</th><th>Fecha</th></tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let r of mayorMenor()">
-            <td>{{ r.user_id | slice:0:6 }}…</td>
-            <td>{{ r.score }}</td>
-            <td>{{ r.created_at | date:'short' }}</td>
-          </tr>
-          <tr *ngIf="mayorMenor().length === 0">
-            <td colspan="3" class="muted">Aún no hay resultados.</td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
-
-    <!-- PREGUNTADOS -->
-    <section class="block">
-      <h2>Preguntados</h2>
-      <table class="grid">
-        <thead>
-          <tr><th>Jugador</th><th>Puntaje</th><th>Fecha</th></tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let r of preguntados()">
-            <td>{{ r.user_id | slice:0:6 }}…</td>
-            <td>{{ r.score }}</td>
-            <td>{{ r.created_at | date:'short' }}</td>
-          </tr>
-          <tr *ngIf="preguntados().length === 0">
-            <td colspan="3" class="muted">Aún no hay resultados.</td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
-
-    <!-- SUDOKU -->
-    <section class="block">
-      <h2>Sudoku</h2>
-      <table class="grid">
-        <thead>
-          <tr><th>Jugador</th><th>Puntaje</th><th>Tiempo (s)</th><th>Fecha</th></tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let r of sudoku()">
-            <td>{{ r.user_id | slice:0:6 }}…</td>
-            <td>{{ r.score }}</td>
-            <td>{{ r.meta?.time_seconds ?? '—' }}</td>
-            <td>{{ r.created_at | date:'short' }}</td>
-          </tr>
-          <tr *ngIf="sudoku().length === 0">
-            <td colspan="4" class="muted">Aún no hay resultados.</td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
-
-  </ng-template>
+  <div class="actions">
+    <button class="btn btn-secondary" (click)="clear()">Borrar mis resultados (dev)</button>
+    <button class="btn" routerLink="/">← Volver al Inicio</button>
+  </div>
 </section>

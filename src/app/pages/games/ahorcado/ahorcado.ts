@@ -15,7 +15,7 @@ const WORDS = [
   styleUrl: './ahorcado.scss'
 })
 export class AhorcadoPage implements OnDestroy {
-  // --- juego base (tu lógica) ---
+  
   word = signal<string>(this.pickWord());
   guesses = signal<Set<string>>(new Set());
   attemptsLeft = signal<number>(6);
@@ -29,7 +29,7 @@ export class AhorcadoPage implements OnDestroy {
     return w.split('').map(ch => g.has(ch) ? ch : ' _ ').join('');
   });
 
-  // --- HUD NUEVO ---
+  // --- HUD  ---
   // tiempo
   elapsedSec = signal<number>(0);
   private timer: any = null;

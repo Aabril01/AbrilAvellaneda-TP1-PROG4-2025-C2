@@ -1,9 +1,9 @@
 // src/app/services/results.service.ts
 import { Injectable, signal } from '@angular/core';
 import { SupabaseClient } from '@supabase/supabase-js';
+import { environment } from '../../environments/environment';
 import { AuthService } from './auth.service';
 import { SupabaseService } from './supabase.service';
-import { environment } from '../../environments/environment';
 
 export type GameResult = {
   id?: string;
@@ -24,9 +24,10 @@ export class ResultsService {
   error = signal<string>('');
 
   constructor(private auth: AuthService, sb: SupabaseService) {
-    // Usar SIEMPRE el cliente compartido
-    if (environment.supabaseUrl && environment.supabaseAnonKey) {
-      this.supabase = sb.client;  // <<< única instancia
+    // Usa SIEMPRE el cliente único provisto por SupabaseService
+    const hasKeys = !!(environment.supabaseUrl && environment.supabaseAnonKey);
+    if (hasKeys) {
+      this.supabase = sb.client;
       this.useLocalFallback = false;
     } else {
       this.useLocalFallback = true;
@@ -95,6 +96,6 @@ export class ResultsService {
         if (error) throw error;
         this.results.set([]);
       }
-    } catch {/* ignore */}
+    } catch { /* ignore */ }
   }
 }

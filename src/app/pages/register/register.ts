@@ -17,20 +17,21 @@ export class RegisterPage {
 
   constructor(private auth: AuthService, private router: Router) {}
 
+    // src/app/pages/register/register.ts
   async onSubmit(f: NgForm) {
     if (this.loading || !f.valid) return;
-
     this.loading = true;
-    try {
-      const ok = await this.auth.register(this.model);
-      if (ok) {
-        // Registro OK -> ir a LOGIN (no queda logueada)
-        this.router.navigateByUrl('/login');
-      }
-    } finally {
-      this.loading = false; // <- siempre apagamos el spinner
+    const ok = await this.auth.register(this.model);
+    this.loading = false;
+    if (ok) {
+      alert('Registro exitoso. Ahora podés iniciar sesión.');
+      this.router.navigate(['/login']);
+    } else {
+      alert('Registro inválido: ' + this.auth.lastError());
     }
   }
+
+
 
   get errorMsg() { return this.auth.lastError(); }
 }

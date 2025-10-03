@@ -94,26 +94,81 @@
 .wheel-wrap{ display:grid; place-items:center; gap:1rem; padding:1rem 0; position:relative; }
 .needle{ position:absolute; top:58px; font-size:18px; color:#fff; text-shadow:0 2px 6px rgba(0,0,0,.6); }
 
+/* =========================
+   RULETA con íconos centrados
+   ========================= */
 .wheel{
-  position:relative; width:280px; height:280px; border-radius:50%;
-  background: conic-gradient(#ff7b7b 0 60deg, #ffd166 0 120deg, #8bd17c 0 180deg, #6ec1ff 0 240deg, #b18cff 0 300deg, #ffa9e6 0 360deg);
-  box-shadow:0 10px 30px rgba(0,0,0,.35); border:4px solid rgba(255,255,255,.15);
+  --size: 280px;           /* podés subir a 320px si querés más grande */
+  --n: 6;                  /* cantidad de porciones */
+  position: relative;
+  width: var(--size);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  margin: 0 auto 12px;
+  border: 4px solid rgba(255,255,255,.15);
+  box-shadow: 0 10px 30px rgba(0,0,0,.35);
+
+  /* “torta” de 6 colores */
+  background:
+    conic-gradient(
+      #ffa4c7 0    60deg,   /* Arte */
+      #ff9581 60deg 120deg, /* Entretenimiento */
+      #ffd26a 120deg 180deg,/* Deportes */
+      #7bdcfe 180deg 240deg,/* Geografía */
+      #7cf0a7 240deg 300deg,/* Ciencia */
+      #b39bff 300deg 360deg /* Historia */
+    );
+}
+
+/* Separadores sutiles (opcional) */
+.wheel::before{
+  content:"";
+  position:absolute; inset:0;
+  border-radius:50%;
+  background:
+    conic-gradient(from 0deg,
+      #0000 0deg 60deg, #ffffff30 60deg 60.5deg);
+  mask: radial-gradient(circle at 50% 50%, #0000 0 12%, #000 12%); 
+  pointer-events:none;
+}
+
+/* Puntero (queda como lo tenías) */
+.needle{
+  position:absolute; top:58px;
+  font-size:18px; color:#fff;
+  text-shadow:0 2px 6px rgba(0,0,0,.6);
+}
+
+/* Íconos centrados en cada porción */
+.wheel .icon{
+  /* centro de cada porción: base en (360/n)*i + (mitad de porción) */
+  --angle: calc( (360deg / var(--n)) * var(--i) + (360deg / var(--n) / 2) );
+  position:absolute;
+  left:50%; top:50%;
+  width:60%; height:60%;
+  transform: translate(-50%,-50%) rotate(var(--angle));
+  transform-origin:center;
+  display:grid; place-items:center;
+  pointer-events:none; /* que no tapen clicks */
+}
+
+.wheel .icon > span,
+.wheel .icon > img{
+  /* alejamos desde el centro y enderezamos */
+  transform: translateY(-42%) rotate(calc(-1 * var(--angle)));
+  width:56px; height:56px;
+  display:grid; place-items:center;
+  font-size:42px;      /* para emoji */
+  filter: drop-shadow(0 3px 6px rgba(0,0,0,.35));
+}
+
+.wheel .icon > img{ object-fit:contain; }
+
+/* Animación de giro (si ya la usás en TS, se mantiene) */
+.wheel.spin{
   transition: transform 2.2s cubic-bezier(.21,.8,.22,1);
 }
-.wheel.spin{ transform: rotate(900deg); } /* 2.5 vueltas aprox */
 
-.slice{
-  position:absolute; left:50%; top:50%; transform-origin:0 0; width:50%; height:2px;
-  & span{ position:absolute; left:70px; top:-24px; font-size:32px; }
-  // Para usar imágenes en lugar de emoji:
-  // & img{ position:absolute; left:64px; top:-24px; width:48px; height:48px; object-fit:contain; }
-}
-.s0{ transform: rotate(30deg); }
-.s1{ transform: rotate(90deg); }
-.s2{ transform: rotate(150deg); }
-.s3{ transform: rotate(210deg); }
-.s4{ transform: rotate(270deg); }
-.s5{ transform: rotate(330deg); }
 
 .meta{ opacity:.85; margin:.5rem 0; }
 .question{ font-size:1.25rem; margin:.5rem 0 1rem; }

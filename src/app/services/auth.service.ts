@@ -33,14 +33,13 @@ export class AuthService {
             displayName: (u.user_metadata as any)?.name ?? u.email?.split('@')[0] ?? null
           });
           localStorage.setItem('bitzone_user', JSON.stringify(this._user()));
-          await this.upsertProfile(u).catch(() => {});
         } else {
-          const persisted = localStorage.getItem('bitzone_user');
-          if (persisted) this._user.set(JSON.parse(persisted));
+          localStorage.removeItem('bitzone_user');
+          this._user.set(null);
         }
       })();
 
-      this.supabase.auth.onAuthStateChange(async (_ev, session) => {
+      this.supabase.auth.onAuthStateChange((_ev, session) => {
         const u = session?.user;
         if (u) {
           this._user.set({
@@ -49,7 +48,6 @@ export class AuthService {
             displayName: (u.user_metadata as any)?.name ?? u.email?.split('@')[0] ?? null
           });
           localStorage.setItem('bitzone_user', JSON.stringify(this._user()));
-          await this.upsertProfile(u).catch(() => {});
         } else {
           this._user.set(null);
           localStorage.removeItem('bitzone_user');
@@ -63,22 +61,6 @@ export class AuthService {
     }
   }
 
-  private async upsertProfile(u: { id: string; email?: string | null; user_metadata?: any }, fullNameFromForm?: string) {
-    if (this.useLocalFallback) return;
-    const fullName =
-      fullNameFromForm ??
-      (u?.user_metadata?.full_name ??
-       u?.user_metadata?.name ??
-       u?.email?.split('@')[0] ??
-       null);
-
-    await this.supabase.from('profiles').upsert({
-      id: u.id,
-      full_name: fullName,
-      email: u.email ?? null
-    });
-  }
-
   async login(email: string, password: string): Promise<boolean> {
     this._lastError.set('');
     try {
@@ -89,7 +71,7 @@ export class AuthService {
           this.persistUser(demoUser);
           return true;
         }
-        this._lastError.set('Credenciales inválidas (modo local). Usa testers o configura Supabase.');
+        this._lastError.set('Credenciales inválidas (modo local)');
         return false;
       }
 
@@ -98,8 +80,6 @@ export class AuthService {
         this._lastError.set(error?.message ?? 'No se pudo iniciar sesión');
         return false;
       }
-
-      await this.upsertProfile(data.user).catch(() => {});
 
       const appUser: AppUser = {
         id: data.user.id,
@@ -115,44 +95,36 @@ export class AuthService {
     }
   }
 
-  /** Registro SIN autologin. */
   async register(model: { email: string; password: string; name: string; surname: string; age: number; }): Promise<boolean> {
     this._lastError.set('');
     try {
       if (this.useLocalFallback) {
-        if (model.email.endsWith('+exists@bitzone.com')) {
-          this._lastError.set('El usuario ya se encuentra registrado (simulado).');
-          return false;
-        }
-        // Registro OK simulado (sin iniciar sesión)
+        const appUser: AppUser = {
+          id: crypto.randomUUID(),
+          email: model.email,
+          displayName: model.name
+        };
+        // NO persistimos al registrar, solo al loguear
         return true;
       }
 
       const { data, error } = await this.supabase.auth.signUp({
         email: model.email,
         password: model.password,
-        options: { data: { name: model.name, surname: model.surname, age: model.age, full_name: model.name } }
+        options: { data: { name: model.name, surname: model.surname, age: model.age } }
       });
       if (error || !data.user) {
         this._lastError.set(error?.message ?? 'No se pudo registrar el usuario');
         return false;
       }
 
-      // Perfil
       await this.supabase.from('profiles').upsert({
         id: data.user.id,
         email: model.email,
         name: model.name,
         surname: model.surname,
-        age: model.age,
-        full_name: model.name
+        age: model.age
       });
-      await this.upsertProfile(data.user, model.name).catch(() => {});
-
-      // 🚫 Asegurar que NO quede logueada:
-      await this.supabase.auth.signOut().catch(() => {});
-      this._user.set(null);
-      localStorage.removeItem('bitzone_user');
 
       return true;
 

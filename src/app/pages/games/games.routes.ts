@@ -1,6 +1,7 @@
 // src/app/pages/games/games.routes.ts
 import { Routes } from '@angular/router';
 import { Component } from '@angular/core';
+import { authGuard } from '../../guards/auth.guard';
 
 import { AhorcadoPage } from './ahorcado/ahorcado';
 import { MayorMenorPage } from './mayor-menor/mayor-menor';
@@ -29,5 +30,6 @@ export const GAMES_ROUTES: Routes = [
   { path: 'ahorcado', component: AhorcadoPage },
   { path: 'mayor-menor', component: MayorMenorPage },
   { path: 'preguntados', component: PreguntadosPage },
-  { path: 'sudoku', component: SudokuPage }
+  { path: 'sudoku', component: SudokuPage },
+ 
 ];
